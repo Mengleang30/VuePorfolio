@@ -35,7 +35,7 @@ const mySection = [
             Through academic projects and self-learning, I’ve built applications that combine clean UI design with powerful server-side logic. I enjoy working on both sides of development, turning ideas into functional, user-friendly web experiences.
             I'm always eager to learn new tools and contribute to exciting tech projects in real-world settings.
             <a href=" https://my-portfolio-ten-flax-35.vercel.app/ ">First Portfolio</a> and  
-            <a href="">Second Portfolio</a> .
+            <a href="https://vue-porfolio-eight.vercel.app/">Second Portfolio</a> .
         </p>
         <h3>What I do!</h3>
         <hr>
