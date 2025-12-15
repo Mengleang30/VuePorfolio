@@ -1,25 +1,35 @@
-<script setup>
-import { useStore } from '@/stores/State';
-
-const store = useStore();
-
-</script>
-
 <template>
-       <div class="right_container" :class="{darkMode : store.dartMode}" >
-           <RouterView />
-        </div>
+  <div class="right-box" :class="{ dark: store.dartMode }">
+    <RouterView />
+  </div>
 </template>
 
-<style >
+<script setup>
+import { useStore } from '@/stores/State';
+const store = useStore();
+</script>
 
-.right_container{
-    background-color: rgb(248, 248, 248);
-    /* background-color: black; */
-    flex-grow: 1;
-    padding: 5px;
+<style>
+.right-box {    
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+  transition: 0.3s;
+  flex-grow: 1;
 }
-.darkMode{
-    background-color: black;
+
+.right-box.dark {
+  background: #151515;
+  color: #e0e0e0;
+  box-shadow: 0 0 20px rgba(255,255,255,0.06);
 }
+@media (max-width: 768px) {
+  .right-box {
+    /* width: 95%; */
+    margin-top: .4rem;
+    
+  }
+}
+
 </style>

@@ -11,25 +11,44 @@ defineProps({
 </script>
 
 <template>
-    <main class="mainPage">
-      <LeftContainer :class="{darkMode : DartMode}"/>
-      <RightContainer :class="{darkMode : DartMode}"/>
-    </main>
+  <main class="main-page" :class="{ darkMode: DartMode }">
+    <div class="layout-wrapper">
+      <LeftContainer />
+      <RightContainer />
+    </div>
+  </main>
 </template>
 
-<style scoped>
 
-.mainPage{
-    background-color: blanchedalmond;
-    min-height: 80vh;
-    margin-top: 5px;
-    border: 1px solid rgb(255, 114, 114);
-    border-radius: 4px;
-    /* padding: 5px; */
-    display: flex;
-    justify-content: space-between;
-    gap: 5px;
-    box-shadow: 0px 4px 14px 4px rgba(0,0,0,0.19);
+<style scoped>
+.main-page {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
 }
+
+/* CENTERED WRAPPER (IMPORTANT) */
+.layout-wrapper {
+  display: flex;
+  gap: 1rem;
+  /* max-width: 1300px; */
+  width: 100%;
+  margin: auto;
+}
+
+/* MOBILE MODE: STACK */
+@media (max-width: 780px) {
+  .layout-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+/* Dark Mode */
+.darkMode {
+  background: #0f0f0f;
+}
+
 
 </style>

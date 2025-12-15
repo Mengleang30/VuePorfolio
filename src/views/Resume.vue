@@ -1,91 +1,213 @@
 <script setup>
+import { useUserStore } from '@/stores/UserState';
+import { computed, onMounted, ref } from 'vue';
 
-const data = [
-    {
-        year: "2020-2021",
-        certificate: "Grade C Student of academic",
-        school: "Hun Sen Chamkar lue High School​"
-    },
-    {
-        year: "2021-current",
-        certificate: "Information Technology and community",
-        school: "Institute of Technology of Cambodia​"
-    },
-    
-]
 
-const experience = [
-    {
-        work : "Academic Project-Bookstore Web App",
-        details : `Developed a responsive bookstore management web app
-         using Vue.js and Laravel. Built dynamic UI components for book 
-         browsing and filtering, integrated RESTful APIs and user authentication
-          with Laravel Sanctum, and used Docker for containerization. Connected MySQL
-           via Eloquent ORM, handled API requests with Axios, and maintained version control with Git.` 
-    },
-    {
-        work: "Personal Portfolio",
-        details: "Build 2 personal portfolios using ReactJs and VueJs"
-    }
-]
+const userState = useUserStore();
 
+const myEducations = computed(()=>{
+    if(!userState.educations.length) return {};
+
+    return userState.educations;
+});
+
+const myExperience = computed(()=>{
+    if(!userState.experience.length) return {};
+
+    return userState.experience;
+});
+
+onMounted (()=>{
+  userState.fetchEducation();
+  userState.fetchExperience();
+})
 
 </script>
 
 <template>
-    <div class="resume">
-    <h3>Resume</h3>
-    <hr>
-    <h4>My Education</h4>
-    <div class="experience">
-        <div class="box" v-for="Data in data" :key="Data.school">
-         <span>{{ Data.year }}</span>
-         <p><strong>{{ Data.certificate }}</strong></p>
-         <p>{{ Data.school }}</p>
+  <div class="resume-container">
+
+    <h2 class="section-title">📘 RESUME</h2>
+    <!-- Experience -->
+ <h3 class="sub-title">💼 My Experience</h3>
+<div class="exp-grid">
+  <div class="exp-card" v-for="Data in myExperience" :key="Data.id">
+    <h4>{{ Data.position }}</h4>
+    <p class="company">{{ Data.work_place }}</p>
+    <p class="date">{{ Data.date }}</p>
+    <p class="desc">{{ Data.description }}</p>
+  </div>
+</div>
+
+  <!-- Education -->
+    <h3 class="sub-title">🎓 My Education</h3>
+    <div class="timeline">
+      <div class="timeline-card" v-for="Data in myEducations" :key="Data.id">
+        <span class="timeline-year">{{ Data.year }}</span>
+        <h4 class="timeline-title">{{ Data.certificate }}</h4>
+        <p class="timeline-sub">{{ Data.school_name }}</p>
+      </div>
     </div>
-    </div>
-    <h4>My Experience</h4>
-    <div class="experience">
-        <div class="box" v-for="Data in experience" :key="Data.work">
-         <strong> {{ Data.work }}</strong>
-         <p class="details">{{ Data.details }}</p>
-    </div>
-    </div>
-    </div>
+
+
+
+  </div>
 </template>
 
+
 <style scoped>
-.resume{
-    min-height: 100vh;
-}
-.details{
-    text-align: start;
+.resume-container {
+  min-height: 100vh;
+  padding: 1rem;
+  color: inherit;
 }
 
-.experience{
-    display: grid;
-    padding: 5px;
-    height: auto;
-    place-content: center;
-    text-align: center;
-    gap: 5px;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+/* Main Title */
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  background: linear-gradient(90deg, #6e8fff, #00ccff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.box{
-    background-color: rgb(247, 255, 252);
-    padding: 4px;
-    border-radius: 5px;
-    width: 98%;
-    line-height: 1rem;
-    border: 1px solid rgba(241, 241, 241, .4);
-    transition: all .1s;
+
+/* Sub Title */
+.sub-title {
+  margin-top: 1.4rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  /* color: #3a3a3a; */
 }
-.box h4{
-    text-align: center;
+
+/* Timeline Container (grid layout) */
+.timeline {
+  display: grid;
+  margin-top: 0.7rem;
+  gap: .6rem;
+  padding: 0.3rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
-.box:hover {
-    scale: 1.05;
-    background-color: cornflowerblue;
-    color: aliceblue;
+
+/* Each Card */
+.timeline-card {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(230, 230, 230, 0.6);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  transition: 0.25s ease;
+  position: relative;
 }
+
+/* Hover Effect */
+.timeline-card:hover {
+  transform: translateY(-4px);
+  background: #e7f0ff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Year Badge */
+.timeline-year {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Card Titles */
+.timeline-title {
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Sub Text */
+.timeline-sub {
+  margin-top: 3px;
+  font-size: 0.9rem;
+  font-style: italic;
+  /* color: #555; */
+}
+
+/* Experience Details */
+.details {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #444;
+  text-align: start;
+  line-height: 1.4rem;
+}
+
+/* Dark Mode (if using store.dartMode) */
+.darkMode .timeline-card {
+  /* background: #151515; */
+  background: #1a1a1a;  
+  border-color: #333;
+  box-shadow: 0 4px 10px rgba(255,255,255,0.05);
+  transition: 0.25s ease;
+}
+
+.darkMode .timeline-card:hover {
+  background: #242424;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(255,255,255,0.08);
+}
+
+.darkMode .timeline-year {
+  background: #4d7bff;
+}
+
+.darkMode .timeline-title {
+  color: #eaeaea;
+}
+
+.darkMode .timeline-sub {
+  color: #bfbfbf;
+}
+
+.darkMode .details {
+  color: #d0d0d0;
+}
+.exp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.exp-card {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  transition: 0.25s ease;
+}
+
+.exp-card:hover {
+  transform: translateY(-4px);
+  background: #ecf4ff;
+}
+
+.company {
+  font-weight: 600;
+  color: #555;
+}
+
+.date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.desc {
+  margin-top: 6px;
+  color: #444;
+  line-height: 1.45rem;
+}
+
+
 </style>

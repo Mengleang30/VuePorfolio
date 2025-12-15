@@ -1,114 +1,87 @@
-<script setup>
+<template>
+  <nav class="nav-bar" :class="{ dark: store.dartMode }">
+    <div
+      class="nav-btn"
+      :class="{ active: route.path === Nav.navigate }"
+      v-for="Nav in navbar"
+      :key="Nav.name"
+      @click="navigate(Nav.navigate)"
+    >
+      <!-- <img :src="Nav.img" /> -->
+      {{ Nav.name }}
+    </div>
+  </nav>
+</template>
 
+<script setup>
 import { useStore } from '@/stores/State';
 import { useRouter, useRoute } from 'vue-router';
 
-
-const Router = useRouter();
+const store = useStore();
+const router = useRouter();
 const route = useRoute();
 
 const navbar = [
-    {
-    navigate: "/",
-    name: "Home",
-    img: "https://img.icons8.com/?size=100&id=83326&format=png&color=000000"
-    },
-    {
-    navigate: "/resume",
-    name: "Resume",
-    img: "https://img.icons8.com/?size=100&id=44091&format=png&color=000000"
-    },
-    {
-    navigate: "/skill",
-    name: "Skills",
-    img: "https://img.icons8.com/?size=100&id=2333&format=png&color=000000"
-    },
-    {
-    navigate: "/contact",   
-    name: "Contact",
-    img: "https://img.icons8.com/?size=100&id=aUyUNnSNjoAd&format=png&color=000000"
-    },
-]
+  { navigate: "/", name: "Home"},
+  { navigate: "/resume", name: "Resume" },
+  { navigate: "/skill", name: "Skills"},
+  { navigate: "/contact", name: "Contact"},
+];
 
-const navigate = (path) => {
-    Router.push(path);
-}
-
-const store = useStore();
-
+const navigate = (path) => router.push(path);
 </script>
 
-<template>
-    <div class="navbar" >
-        <div class="eachBtn" :class="{active: route.path === Nav.navigate, darkMode : store.dartMode}" v-for="Nav in navbar" :key="Nav.name" @click="navigate(Nav.navigate)">
-            <img :src="Nav.img" :alt="Nav.name">
-            <span>{{ Nav.name }}</span>
-        </div>
-    </div>
-</template>
-
 <style scoped>
-
-.eachBtn.active{
-    background-color: rgb(224, 224, 224);
-    border: 1px solid rgb(13, 84, 227);
-    color: blue;
-    font-weight: bold;
-}
-.eachBtn.darkMode{
-    background-color: rgb(78, 76, 76);
-    color: white;
-}
-
-.navbar{
-    background-color: transparent;
-    border: 1px solid rgb(255, 114, 114);
-    border-radius: 4px;
-    display: flex;
-    padding: 10px;
-    gap: 1.2rem;
-    justify-content: end;
-    float: right;
-    margin-top: 5px;
-}
-.eachBtn{
-    background-color: rgb(252, 252, 252);
-    display: flex;
-    border: 1px solid rgb(222, 222, 222);
-    flex-direction: column;
-    align-items: center;
-    padding: 5px;
-    border-radius: 5px;
-    width: 3rem;
-    gap: 2.2px;
-    cursor: pointer;
-    transition: all .1s;
-    
-}
-.eachBtn:hover{
-    background-color:whitesmoke;
-    color: blue;
-    scale: 1.02;
-}
-.eachBtn span {
-    font-size: 12px;
-}
-.eachBtn img{
- width: 1.5rem;
- height: 1.5rem;
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(7px);
+  border: 1px solid #ddd;
+  transition: 0.3s;
 }
 
-@media (max-width: 600px) {
-  .eachBtn{
-    width: 3rem;
-   
-  }
-  .eachBtn span{
-    font-size: 10px;
-  }
-  .eachBtn img{
-        width: 1rem;
-        height: 1rem;
+/* Dark mode */
+.nav-bar.dark {
+  background: rgba(30, 30, 30, 0.5);
+  border-color: #444;
 }
+
+/* Buttons */
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7px;
+  width: 4.4rem;
+  border-radius: 8px;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.nav-btn:hover {
+  transform: scale(1.03);
+  background: rgba(80, 80, 255, 0.1);
+}
+
+.nav-btn.active {
+  background: #e2e8ff;
+  border: 2px solid #4d6bff;
+  color: #3350ff;
+}
+
+.nav-btn img {
+  width: 1.4rem;
+}
+
+.nav-btn span {
+  font-size: 11px;
+  margin-top: 4px;
 }
 </style>

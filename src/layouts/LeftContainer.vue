@@ -1,199 +1,257 @@
 <script setup>
-
-import imgaes from '../assets/images.jpg'
-
 import { useStore } from '@/stores/State';
+import { onMounted, ref, computed } from 'vue';
+import imgaes from '../assets/images.jpg';
+import { useUserStore } from '@/stores/UserState';
 
 const store = useStore();
-const myInformation = {
-    name: "Nov Mengleang",
-    position: "Web Developer",
-    imgaes: imgaes,
-    email: "novmengleang14@gmail.com",
-    icons_contact: [
-        {
-            icons: "https://img.icons8.com/?size=100&id=63306&format=png&color=000000",
-            link: ""
-        },
-        {
-            icons: "https://img.icons8.com/?size=100&id=iEBcQcM9rnZ9&format=png&color=000000",
-            link: ""
-        },
-        {
-            icons: 'https://img.icons8.com/?size=100&id=13930&format=png&color=000000',
-            link: ""
-        },
-    ],
+const myData = ref([]);
+
+const userState = useUserStore();
+
+
+
+
+// Dynamic computed profile information
+const myInformation = computed(() => {
+  if (!userState.user.length) return {};
+
+  myData.value = userState.user[0];
+
+
+  return {
+    name: myData.value.name,
+    position: myData.value.position,
+    imgaes,
+    email: myData.value.email,
+    nationality: myData.value.nationality,
+
+    contacts: userState.contact, 
     icons_contact2: [
-        {
-            type : "Phone",
-            icons: "https://img.icons8.com/?size=100&id=ufkkYBXJSuPy&format=png&color=000000",
-            inform: "060654575"
-        },
-        {
-            type : "Email",
-            icons: "https://img.icons8.com/?size=100&id=JeO1Kv9jsmLr&format=png&color=000000",
-            inform: "novmengleang14@gmail.com"
-        },
-        {
-            type : "Location",
-            icons: "https://img.icons8.com/?size=100&id=13800&format=png&color=000000",
-            inform: "Phnom Penh"
-        },
-    ],
-    
-}
+      { icons: "https://img.icons8.com/?size=100&id=ufkkYBXJSuPy&format=png&color=000000", inform: myData.value.phone },
+      { icons: "https://img.icons8.com/?size=100&id=JeO1Kv9jsmLr&format=png&color=000000", inform: myData.value.email },
+      { icons: "https://img.icons8.com/?size=100&id=13800&format=png&color=000000", inform: myData.value.address },
+    ]
+  };
+});
+// const cv = ref("");
+
+const cv = computed(()=>{
+  if (!userState.cv.length) return "";
+
+  return userState.cv[0].link_cv;
+})
+
+
+onMounted(() => {
+  userState.fetchUser();
+  userState.fetchCVs();
+  userState.fetchContact();
+});
 
 const downloadCV = () => {
-    const link = document.createElement('a');
-    link.href = '../../public/CV (MengLeang).pdf'
-    link.download = "MengleangCV.pdf"
-    link.click();
-}
+  if (!cv.value) {
+    console.log("CV is empty");
+    return;
+  }
 
-
+  const link = document.createElement('a');
+  link.href = cv.value;
+  link.download = "Nov_Mengleang_CV.pdf";
+  link.click();
+};
 
 </script>
 
+
 <template>
-      <div class="left_container" v-if="myInformation" :class="{darkMode : store.dartMode}" >
-            <img class="img_me" :src="myInformation.imgaes" alt="">
-            <h3 class="myname">{{ myInformation.name }}</h3>
-            <button class="cv" @click="downloadCV">Download CV</button>
-            <h4 class="position">{{ myInformation.position }}</h4>
-            <div class="contact" >
-                <button v-for="icons in myInformation.icons_contact" :key="icons.icons">
-                    <a :href="icons.link">
-                    <img  :src="icons.icons" alt="">
-                    </a>    
-                </button>
-            </div>
-            <div class="contact_box">
-                
-                <div class="each_contact" v-for="icons in myInformation.icons_contact2" :key="icons.icons">
-                    <img :src="icons.icons" :alt="icons.inform">
-                    
-                    <div class="contact_way">
-                        <strong>{{ icons.type }}</strong>
-                        <br>
-                        <span :title="icons.inform">{{ icons.inform }}</span>
-                    </div>
-                </div>
-               
-            </div>
+  <div class="profile-card" :class="{ darkMode: store.dartMode }">
+    <!-- Profile Image -->
+     
+    <div class="profile-image-wrapper">
+      <img class="profile-image" :src="myInformation.imgaes" alt="me" />
     </div>
+
+    <!-- Name & Position -->
+    <h2 class="profile-name">{{ myInformation.name }}</h2>
+    <p class="profile-role">{{ myInformation.position }}</p>
+
+    <!-- CV Button -->
+    <button class="btn-cv" @click="downloadCV">
+      📄 Download CV
+    </button>
+
+    <!-- Social Icons -->
+    <div class="social-icons">
+      <a
+        v-for="contact in myInformation.contacts"
+        :key="contact.id"
+        :href="contact.contact_link"
+        class="social-btn"
+        :title="contact.contact_name"
+      >
+        <img :src="contact.icons" />
+      </a>
+    </div>
+
+    <!-- Contact Details -->
+    <div class="contact-list">
+      <div
+        class="contact-item"
+        v-for="icons in myInformation.icons_contact2"
+        :key="icons.icons"
+      >
+        <img class="contact-icon" :src="icons.icons" alt="" />
+        <div class="contact-info">
+          <!-- <strong>{{ icons.type }}</strong> -->
+          <span class="inform">{{ icons.inform }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped>
-.left_container{
-    background-color: rgb(248, 248, 248);
-    /* background-color: black; */
-    width: 18rem;
-    padding: 5px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
+<style>
+  .profile-card {
+  width: 20rem;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: 0.3s ease;
 }
 
-.darkMode{
-    background-color: black;
-    color: white;
-}
-.cv{
-    margin: 5px;
-    width: 50%;
-    background-color: tomato;
-    border: none;
-    color: white;
-    transition: all .1s;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    height: 3rem;
-}
-.cv:hover{
-    background-color: blue;
-
+/* Dark Mode */
+.darkMode {
+  background: #101010;
+  color: #f0f0f0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-.contact_box {
-    width: 100%;
-    padding: 2px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.inform {
+  text-align: start;
 }
-.contact_box .each_contact{
-    display: flex;
-    gap: 5px;
-    font-size: 14px;
-    align-items: center;
-    line-height: 1.4rem;
-    /* background-color: aliceblue; */
-    padding: 3px;
-    border-radius: 5px;
-}
-.contact_box .each_contact span{
-  
+/* Profile image */
+.profile-image-wrapper {
+  width: 120px;
+  height: 120px;
+  margin: auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #007bff;
+  padding: 3px;
 }
 
-.contact_box img {
-    width: 1.4rem;
-    height: 1.4rem;
-}
-.myname {
-    background: #020024;
-    background: linear-gradient(90deg, rgb(68, 59, 255) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.position{
-    color: slategrey;
-}
-.left_container .img_me{
-    max-width: 50%;
-    border-radius: 4px;
-    border: 1px solid blanchedalmond;
-    
-}
-.contact{
-    width: 80%;
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-}
-.contact button {
-    background-color: transparent;
-    border: none;
-    transition: all .2s;
-    border-radius: 5px;
-}
-.contact button:hover{
-    background-color: cadetblue;
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.contact img {
-    width: 2rem;
+/* Name & Role */
+.profile-name {
+  margin-top: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6e8fff, #009dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-@media (max-width: 600px) {
-    .left_container{
+.profile-role {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: gray;
+}
 
-    max-width: 40%;
-    padding: 5px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    
+/* CV Button */
+.btn-cv {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  background: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
 }
-    .contact_way span{
-        font-size: 10.5px;
-    }
-    .cv{
-      font-size: 12px;
-}
-    
 
-  
+.btn-cv:hover {
+  background: #005ecb;
 }
+
+/* Social Icons */
+.social-icons {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.social-icons img {
+  width: 28px;
+  height: 28px;
+  transition: 0.2s;
+}
+.social-btn img {
+  width: 28px;
+  height: 28px;
+  transition: 0.2s;
+}
+
+.social-btn:hover img {
+  transform: scale(1.15);
+}
+
+/* Contact List */
+.contact-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(0, 123, 255, 0.08);
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.contact-item:hover {
+  background: rgba(0, 123, 255, 0.18);
+}
+
+.contact-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.contact-info span {
+  font-size: 0.85rem;
+  color: gray;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .profile-card {
+    width: 95%;
+    margin: auto;
+  }
+
+  .btn-cv {
+    font-size: 0.9rem;
+  }
+
+  .contact-info span {
+    font-size: 0.75rem;
+  }
+}
+
+
 </style>

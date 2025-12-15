@@ -1,100 +1,141 @@
 <script setup>
-
 import Navbar from './layouts/Navbar.vue';
 import Main from './views/Main.vue';
 import { useStore } from './stores/State';
-
-
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const store = useStore();
+const toggleDark = () => store.setDarkMode();
 
+const isOffline = ref(!navigator.onLine);
 
-// const onDarkMode = ()=>{
-//   darkMode.value = !darkMode.value 
-// }
+function handleOffline() {
+  isOffline.value = true;
+}
 
-const onDarkMode = () => {
-  store.setDarkMode();
-};
+function handleOnline() {
+  isOffline.value = false;
+}
 
+onMounted(() => {
+  window.addEventListener("offline", handleOffline);
+  window.addEventListener("online", handleOnline);
+});
 
+onBeforeUnmount(() => {
+  window.removeEventListener("offline", handleOffline);
+  window.removeEventListener("online", handleOnline);
+});
 </script>
 
 <template>
-<div class="myApp" :class="{darkMode : store.dartMode}" >
-    <header class="header" :class="{darkMode : store.dartMode}">
-    
-    <div class="align_header">
-      <h2>My <strong>Portfolio</strong></h2>
-      <div class="circle" @click="onDarkMode" >
-        <img v-if="store.dartMode" src="https://img.icons8.com/?size=100&id=bLKTySEY4GIL&format=png&color=FFFFFF" alt="dark-mode">
-        <img v-else src="https://img.icons8.com/?size=100&id=28rO6I0klOD8&format=png&color=000000" alt="no-dark-mode">
+  <div v-if="isOffline" class="network-warning">
+    ⚠️ You are offline — check your internet connection.
+  </div>
+
+  <div class="app-wrapper" :class="{ dark: store.dartMode }">
+    <header class="app-header">
+      <div class="header-left">
+        <h2 class="logo">My <strong>Portfolio</strong></h2>
       </div>
-    </div>
-    
+
+      <div class="header-right">
+        <button class="toggle-theme" @click="toggleDark">
+          <img v-if="store.dartMode" src="https://img.icons8.com/?size=100&id=bLKTySEY4GIL&format=png&color=FFFFFF" />
+          <img v-else src="https://img.icons8.com/?size=100&id=28rO6I0klOD8&format=png&color=000000" />
+        </button>
+      </div>
+    </header>
+
     <Navbar />
-  </header>
-  <Main :-dart-mode="store.dartMode" />
-</div>
- 
+
+    <main class="app-main">
+      <Main />
+    </main>
+  </div>
 </template>
 
-<style >
-
-.darkMode{
-    background-color: black;
-    color: rgb(117, 117, 117);
-}
-
-.myApp.darkMode{
-  background-color: black;
-  color: rgb(85, 85, 85);
-}
-
-.header{
-
-  
-}
-.myApp{
+<style>
+/* App wrapper */
+.app-wrapper {
   min-height: 100vh;
-  background-color: aliceblue;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
+  background: #f5f7fa;
+  color: #333;
+  padding: 1.3rem;
+  transition: 0.3s ease;
+  font-family: "Inter", sans-serif;
+
 }
 
-.align_header{
-  /* background-color: antiquewhite; */
+/* Dark mode */
+.app-wrapper.dark {
+  background: #0e0e0e;
+  color: #d4d4d4;
+}
+
+/* Header */
+.app-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  /* padding: 5px 10px;
-  border: 1px solid rgb(255, 114, 114);
-  border-radius: 5px;
-  box-shadow: 0px 4px 14px 4px rgba(0,0,0,0.19); */
-}
-.align_header strong{
-  color: tomato;
-}
-.circle img{
-  width: 1.5rem;
-  height: 1.5rem;
-}
-.circle {
-  background-color: transparent;
-  border: 1.2px solid black;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
 }
 
-@media (max-width: 600px) {
-  *{
-    font-size: 12px;
+.logo strong {
+  color: #ff6b61;
+}
+
+.toggle-theme img {
+  width: 1.4rem;
+}
+
+.toggle-theme {
+  background: transparent;
+  border: 1.5px solid currentColor;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toggle-theme:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Main content */
+.app-main {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.network-warning {
+  background: #ff4d4d;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
