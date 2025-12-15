@@ -26,6 +26,8 @@ onBeforeUnmount(() => {
   window.removeEventListener("offline", handleOffline);
   window.removeEventListener("online", handleOnline);
 });
+
+
 </script>
 
 <template>
@@ -39,12 +41,12 @@ onBeforeUnmount(() => {
         <h2 class="logo">My <strong>Portfolio</strong></h2>
       </div>
 
-      <div class="header-right">
+      <header class="header-right">
         <button class="toggle-theme" @click="toggleDark">
           <img v-if="store.dartMode" src="https://img.icons8.com/?size=100&id=bLKTySEY4GIL&format=png&color=FFFFFF" />
           <img v-else src="https://img.icons8.com/?size=100&id=28rO6I0klOD8&format=png&color=000000" />
         </button>
-      </div>
+      </header>
     </header>
 
     <Navbar />

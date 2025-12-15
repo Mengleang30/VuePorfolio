@@ -1,46 +1,14 @@
 <script setup>
-const Data_skills = [
-  {
-    label: "Front-end",
-    skills: [
-      "HTML5",
-      "CSS",
-      "JavaScript",
-      "TypeScript",
-      "VueJs",
-      "ReactJs",
-      "REST APIs",
-      "Responsive WebDesign",
-    ],
-  },
-  {
-    label: "Back-end",
-    skills: [
-      "PHP",
-      "Laravel",
-      "MySQL",
-      "Authentication",
-      "API development",
-    ],
-  },
-  {
-    label: "Version Control",
-    skills: ["Git", "GitHub"],
-  },
-  {
-    label: "Tools & Platforms",
-    skills: ["Postman", "VS Code", "Docker", "Laravel Artisan"],
-  },
-  {
-    label: "Soft Skills",
-    skills: [
-      "Teamwork",
-      " Problem-solving",
-      "Communication",
-      "Eagerness to Learn",
-    ],
-  },
-];
+import { useSkillStore } from '@/stores/Skills';
+import { computed, onMounted } from 'vue';
+const useSkill = useSkillStore();
+const Data_skills = computed(()=>{
+  return useSkill.skills;
+});
+
+onMounted(()=>{
+  useSkill.fetchSkills();
+})
 </script>
 
 <template>
@@ -48,22 +16,31 @@ const Data_skills = [
     <h2 class="skills-title">✨ SPECIAL SKILLS</h2>
 
     <div class="wrapping">
-      <div class="skill-group" v-for="Data in Data_skills" :key="Data.label">
-
+      <div
+        class="skill-group"
+        v-for="Data in Data_skills"
+        :key="Data.id"
+      >
         <!-- Category Title -->
-        <h3 class="skill-label">{{ Data.label }}</h3>
+        <h3 class="skill-label">
+          {{ Data.skill_name}}
+        </h3>
 
         <!-- Skill Chips -->
         <div class="skill-chips">
-          <span class="skill-chip" v-for="skill in Data.skills" :key="skill">
+          <span
+            class="skill-chip"
+            v-for="(skill, index) in Data.skills"
+            :key="index"
+          >
             {{ skill }}
           </span>
         </div>
       </div>
-
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .skills-section {
@@ -107,7 +84,7 @@ const Data_skills = [
 .wrapping {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
   justify-content: flex-start;
   /* background-color: #00ccff; */
 }
@@ -121,16 +98,16 @@ const Data_skills = [
   gap: 6px;
   border: #e3e3e3 .3px solid;
   border-radius: 10px;
-  background: rgba(240, 248, 255, 0.6);
+  /* background: rgba(240, 248, 255, 0.6); */
 }
 
 /* Chip style */
 .skill-chip {
   padding: 6px 12px;
-  background: #f5faff;
+  /* background: #f5faff; */
   border-radius: 12px;
   font-size: 0.9rem;
-  color: #333;
+  /* color: #333; */
   font-weight: 500;
   border: 1px solid rgba(0, 123, 255, 0.15);
   transition: 0.25s ease;
@@ -138,14 +115,15 @@ const Data_skills = [
 }
 
 .skill-chip:hover {
-  background: #dbe9ff;
+  /* background: #dbe9ff; */
+  color: #007bff;
   transform: translateY(-2px);
   box-shadow: 0 3px 10px rgba(0, 123, 255, 0.25);
 }
 
 /* Dark Mode Support */
 .darkMode .skill-label {
-  color: #efefef;
+  /* color: #efefef; */
 }
 
 .darkMode .skill-label::before {
@@ -158,8 +136,5 @@ const Data_skills = [
   color: #e0e0e0;
 }
 
-.darkMode .skill-chip:hover {
-  background: #2a2a2a;
-  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.15);
-}
+
 </style>

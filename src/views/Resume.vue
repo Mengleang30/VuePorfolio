@@ -1,4 +1,5 @@
 <script setup>
+import { useStore } from '@/stores/State';
 import { useUserStore } from '@/stores/UserState';
 import { computed, onMounted, ref } from 'vue';
 
@@ -22,10 +23,14 @@ onMounted (()=>{
   userState.fetchExperience();
 })
 
+const store = useStore();
+
+
+
 </script>
 
 <template>
-  <div class="resume-container">
+  <div class="resume-container" :class="store.dartMode ? 'darkMode' : ''">
 
     <h2 class="section-title">📘 RESUME</h2>
     <!-- Experience -->
@@ -145,7 +150,7 @@ onMounted (()=>{
 
 /* Dark Mode (if using store.dartMode) */
 .darkMode .timeline-card {
-  /* background: #151515; */
+  background: #151515;
   background: #1a1a1a;  
   border-color: #333;
   box-shadow: 0 4px 10px rgba(255,255,255,0.05);
@@ -187,10 +192,14 @@ onMounted (()=>{
   box-shadow: 0 4px 18px rgba(0,0,0,0.06);
   transition: 0.25s ease;
 }
+.darkMode .exp-card {
+  background: #1a1a1a;
+  box-shadow: 0 4px 16px rgba(255,255,255,0.05);
+}
 
 .exp-card:hover {
   transform: translateY(-4px);
-  background: #ecf4ff;
+  /* background: #ecf4ff; */
 }
 
 .company {
@@ -198,15 +207,27 @@ onMounted (()=>{
   color: #555;
 }
 
+.darkMode .company{
+  color: #aaa;
+}
+
 .date {
   font-size: 0.85rem;
   color: #777;
+  margin-top: 5px;
+}
+
+.darkMode .date {
+  color: #999;
 }
 
 .desc {
   margin-top: 6px;
   color: #444;
   line-height: 1.45rem;
+}
+.darkMode .desc {
+  color: #d0d0d0;
 }
 
 

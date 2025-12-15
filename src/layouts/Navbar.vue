@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav-bar" :class="{ dark: store.dartMode }">
+  <nav class="nav-bar" :class="store.dartMode ? 'darkMode' : '' ">
     <div
       class="nav-btn"
       :class="{ active: route.path === Nav.navigate }"
@@ -84,4 +84,16 @@ const navigate = (path) => router.push(path);
   font-size: 11px;
   margin-top: 4px;
 }
+
+.darkMode .nav-btn.active {
+  background: #2a2a2a;
+  border-color: #4d7bff;
+  color: #aabfff;
+}
+
+.darkMode {
+  background: transparent;
+  border-color: #333;
+}
+
 </style>
