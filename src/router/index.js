@@ -5,6 +5,7 @@ import Resume from '@/views/Resume.vue'
 import Skill from '@/views/Skill.vue'
 
 
+
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/contact', name: 'Contact', component: Contact },

@@ -9,7 +9,7 @@ const userState = useUserStore();
 const myEducations = computed(()=>{
     if(!userState.educations.length) return {};
 
-    return userState.educations;
+    return userState.educations.sort((a,b)=> b.order - a.order);
 });
 
 const myExperience = computed(()=>{
